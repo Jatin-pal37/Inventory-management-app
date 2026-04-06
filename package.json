@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "nodemon backend/server.js",
     "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
-    "start": "node backend/server.js"
+    "start": "node backend/server.js",
+    "seed": "node backend/seeds/products.js",
+    "seed:reset": "node backend/seeds/products.js --reset"
   },
   "keywords": [],
   "author": "",

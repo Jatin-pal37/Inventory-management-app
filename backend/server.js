@@ -8,6 +8,7 @@ import path from "path";
 import productRoutes from "./routes/productRoutes.js";
 import { sql } from "./config/db.js";
 import { aj } from "./lib/arcjet.js";
+import { seedProducts } from "./seeds/products.js";
 
 dotenv.config();
 
@@ -85,6 +86,8 @@ async function initDB() {
 }
 
 initDB().then(() => {
+  // Seed only if empty (safe for dev)
+  seedProducts().catch((error) => console.log("Error seeding products", error));
   app.listen(PORT, () => {
     console.log("Server is running on port " + PORT);
   });

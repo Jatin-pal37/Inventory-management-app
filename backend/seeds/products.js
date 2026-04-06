@@ -49,12 +49,43 @@ const SAMPLE_PRODUCTS = [
     image:
       "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&auto=format&fit=crop&q=60",
   },
+  {
+    name: "Noise Cancelling Earbuds",
+    price: 129.99,
+    image:
+      "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=60",
+  },
+  {
+    name: "Portable SSD 1TB",
+    price: 119.99,
+    image:
+      "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=800&auto=format&fit=crop&q=60",
+  },
+  {
+    name: "Ergonomic Office Chair",
+    price: 219.99,
+    image:
+      "https://images.unsplash.com/photo-1582582429416-963dc66c6f8b?w=800&auto=format&fit=crop&q=60",
+  },
+  {
+    name: "Desk Lamp (Warm White)",
+    price: 39.99,
+    image:
+      "https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=800&auto=format&fit=crop&q=60",
+  },
 ];
 
-async function seedDatabase() {
+export async function seedProducts({ reset = false } = {}) {
   try {
-    // first, clear existing data
-    await sql`TRUNCATE TABLE products RESTART IDENTITY`;
+    if (reset) {
+      await sql`TRUNCATE TABLE products RESTART IDENTITY`;
+    } else {
+      const [{ count }] = await sql`SELECT COUNT(*)::int AS count FROM products`;
+      if (count > 0) {
+        console.log(`Seed skipped (products already exist: ${count})`);
+        return { skipped: true, inserted: 0 };
+      }
+    }
 
     // insert all products
     for (const product of SAMPLE_PRODUCTS) {
@@ -64,12 +95,18 @@ async function seedDatabase() {
       `;
     }
 
-    console.log("Database seeded successfully");
-    process.exit(0); // success code
+    console.log(`Database seeded successfully (${SAMPLE_PRODUCTS.length} products)`);
+    return { skipped: false, inserted: SAMPLE_PRODUCTS.length };
   } catch (error) {
     console.error("Error seeding database:", error);
-    process.exit(1); // failure code
+    throw error;
   }
 }
 
-seedDatabase();
+const isDirectRun = import.meta.url === `file://${process.argv[1]}`;
+if (isDirectRun) {
+  const reset = process.argv.includes("--reset");
+  seedProducts({ reset })
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));
+}
