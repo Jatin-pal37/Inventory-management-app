@@ -54,6 +54,6 @@ npm run dev
 
 ## App URLs
 
-- Frontend: `http://localhost:5173`
+- Frontend: `http://localhost:5174`
 - Backend API: `http://localhost:3000`
 - Products endpoint: `http://localhost:3000/api/products`
